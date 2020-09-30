@@ -1,3 +1,11 @@
+.idea
+results
+test
+docker-compose.yml.save
+docker-compose.yml
+yaml
+Dockerfile
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
