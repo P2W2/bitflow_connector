@@ -1,13 +1,14 @@
 import yaml
 import threading
 from prometheus.target_scraper import PromTargetScraper
+from riemann.input_stream import RiemannInputStream
 from bitflow_connector.client import Client
 
 
 class Settings:
     def __init__(self, path):
         self.settings = self.read_settings(path)
-        self.clients = {}
+        self.clients = self.open_clients()
         self.scrapers = []
 
     @staticmethod
@@ -20,26 +21,23 @@ class Settings:
         return yml
 
     def start_scraper(self):
-        for scraper in self.settings['scrape_configs']:
-            if scraper['type'] == 'prometheus':
-                if scraper['scrape_interval'] is not None:
-                    interval = scraper['scrape_interval']
-                else:
-                    interval = self.settings['scrape_interval']
-                for scrape_target in scraper['scrape_targets']:
-                    prom_scraper = PromTargetScraper(self.clients, scrape_target['metrics'], interval,
-                                                     target_url=scrape_target['host'] + ':' + scrape_target['port'] +
-                                                                scrape_target['path'])
+        # if self.settings['prometheus']:
+        #     for scrape_target in self.settings['prometheus']['scrape_targets']:
+        #             prom_scraper = PromTargetScraper(self.clients, scrape_target['metrics'], scrape_target['scrape_interval'],
+        #                                              target_url=scrape_target['host'] + ':' + scrape_target['port'] +
+        #                                                         scrape_target['path'])
 
-            elif scraper['type'] == 'riemann':
-                print('riemann')
-            else:
-                print('Please set one of the following types for the metrics scraper: riemann, prometheus')
+        if self.settings['riemann_stream']:
+            riemann_scraper = RiemannInputStream(self.clients, self.settings['riemann_stream'])
+        else:
+            print('Please set one of the following types for the metrics scraper: riemann, prometheus')
 
     def open_clients(self):
+        cs = {}
         for destination in self.settings['destination_configs']:
             client = Client(host=destination['host'], port=destination['port'])
-            self.clients.update({destination['name']: client})
+            cs.update({destination['name']: client})
+        return cs
 
 
 if __name__ == '__main__':
