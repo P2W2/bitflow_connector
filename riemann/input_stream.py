@@ -18,9 +18,11 @@ class RiemannInputStream:
         queue.put(data)
 
     def forward(self, msg):
-        sample = self.get_csv_metrics(msg)
-        for destinantion in self.settings['metric_destinations']:
-            self.clients[destinantion].send_sample(sample)
+        if any(item in [msg.events[0].service, 'metric', 'metric_d', 'metric_f'] for item in self.settings['metrics']):
+            print('forward:', msg)
+            sample = self.get_csv_metrics(msg)
+            for destination in self.settings['metric_destinations']:
+                self.clients[destination].send_sample(sample)
 
     def get_csv_metrics(self, message):
         csv_header = 'time,tags'
