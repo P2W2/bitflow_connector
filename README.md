@@ -2,8 +2,8 @@
 This project provides an infrastructure to get historical and live metrics from different monitoring tools and forward them to the TU-Berlin AIOps operation system.
 The data is received from different sources in a various formats and converted to the Bitflow-CVS format to forwarded it in the AIOps data chain.
 
-# RUN
-The project bases on Docker. The main configuration file lies in ```\settings\configuration.yml```. 
+# Configuration
+The main configuration file lies in ```\settings\configuration.yml```. 
 ```
 # Incoming streams from rieman servers or clients. Input is received as protobuf messages.
 riemann_stream:
@@ -69,3 +69,8 @@ destination_configs:
     host: 123.1.1.100
     port: 4999
 ```
+# Docker
+```
+docker run -v /path/to/configuration/file.yml:/settings/configuration.yml p2w2/bitflow_connector
+```
+
