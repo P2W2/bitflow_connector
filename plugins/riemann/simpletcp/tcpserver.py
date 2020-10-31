@@ -1,4 +1,4 @@
-from riemann.simpletcp.serversocket import ServerSocket
+from plugins.riemann.simpletcp.serversocket import ServerSocket
 
 class TCPServer:
     # Mode specifies the IP address the server socket binds to.
