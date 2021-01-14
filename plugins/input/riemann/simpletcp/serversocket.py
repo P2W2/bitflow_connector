@@ -4,6 +4,7 @@ import select
 import socket
 import sys
 
+
 class ServerSocket:
 
     def __init__(self, mode, port, read_callback, max_connections, recv_bytes):
@@ -28,7 +29,7 @@ class ServerSocket:
         # Actually create an INET, STREAMing socket.socket.
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Make it non-blocking.
-        self._socket.setblocking(0)
+        self._socket.setblocking(False)
         # Bind the socket, so it can listen.
         self._socket.bind((self.ip, self.port))
         # Save the callback
@@ -65,7 +66,7 @@ class ServerSocket:
                     # We have a viable connection!
                     client_socket, client_ip = self._socket.accept()
                     # Make it a non-blocking connection.
-                    client_socket.setblocking(0)
+                    client_socket.setblocking(False)
                     # Add it to our readers.
                     readers.append(client_socket)
                     # Make a queue for it.
@@ -113,7 +114,7 @@ class ServerSocket:
                     # The queue wasn't empty; we did, in fact, get something.
                     # So send it.
                     sock.send(data)
-            # Deal with erroring sockets.
+            # Deal with errors sockets.
             for sock in err:
                 # Remove the socket from every list.
                 readers.remove(sock)
